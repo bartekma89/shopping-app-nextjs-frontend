@@ -4,9 +4,8 @@ export type UserState = {
     password?: string[];
   };
   message: string | null;
-};
-
-export type ApiErrorResponse = {
-  message?: string | string[];
-  errors?: UserState["errors"];
+  values: {
+    email: string;
+    password?: string;
+  };
 };

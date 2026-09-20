@@ -1,5 +1,7 @@
-import Link from "next/link";
+"use client";
 
+import Link from "next/link";
+import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,8 +13,15 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { loginUser } from "@/lib/actions";
 
 export default function LoginPage() {
+  const [state, formAction, pending] = useActionState(loginUser, {
+    errors: {},
+    message: null,
+    values: { email: "" },
+  });
+
   return (
     <Card>
       <CardHeader>
@@ -22,7 +31,7 @@ export default function LoginPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" action={formAction}>
           <div className="flex flex-col gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -31,8 +40,16 @@ export default function LoginPage() {
               type="email"
               placeholder="you@example.com"
               autoComplete="email"
-              required
+              defaultValue={state.values.email}
+              aria-describedby="email-error"
             />
+            <div id="email-error" aria-live="polite" aria-atomic="true">
+              {state?.errors?.email?.map((error) => (
+                <p key={error} className="text-sm text-destructive">
+                  {error}
+                </p>
+              ))}
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="password">Password</Label>
@@ -41,11 +58,23 @@ export default function LoginPage() {
               name="password"
               type="password"
               autoComplete="current-password"
-              required
+              aria-describedby="password-error"
             />
+            <div id="password-error" aria-live="polite" aria-atomic="true">
+              {state?.errors?.password?.map((error) => (
+                <p key={error} className="text-sm text-destructive">
+                  {error}
+                </p>
+              ))}
+            </div>
           </div>
-          <Button type="submit" className="w-full">
-            Login
+          <div id="form-error" aria-live="polite" aria-atomic="true">
+            {state?.message && (
+              <p className="text-sm text-destructive">{state.message}</p>
+            )}
+          </div>
+          <Button type="submit" className="w-full" disabled={pending}>
+            {pending ? "Logging in…" : "Login"}
           </Button>
         </form>
       </CardContent>
@@ -53,8 +82,7 @@ export default function LoginPage() {
         Don&apos;t have an account?
         <Link
           href="/signup"
-          className="text-foreground underline-offset-4 hover:underline"
-        >
+          className="text-foreground underline-offset-4 hover:underline">
           Sign up
         </Link>
       </CardFooter>

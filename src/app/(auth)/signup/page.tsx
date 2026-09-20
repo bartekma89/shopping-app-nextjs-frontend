@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { createUser } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,11 +13,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createUser } from "@/lib/actions";
 
 export default function SignupPage() {
-  const [state, dispatchAction] = useActionState(createUser, {
+  const [state, formAction, pending] = useActionState(createUser, {
     errors: {},
     message: null,
+    values: { email: "" },
   });
 
   return (
@@ -30,7 +31,7 @@ export default function SignupPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="flex flex-col gap-4" action={dispatchAction}>
+        <form className="flex flex-col gap-4" action={formAction}>
           <div className="flex flex-col gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -39,6 +40,7 @@ export default function SignupPage() {
               type="email"
               placeholder="you@example.com"
               autoComplete="email"
+              defaultValue={state.values.email}
               aria-describedby="email-error"
             />
             <div id="email-error" aria-live="polite" aria-atomic="true">
@@ -71,8 +73,8 @@ export default function SignupPage() {
               <p className="text-sm text-destructive">{state.message}</p>
             )}
           </div>
-          <Button type="submit" className="w-full">
-            Sign up
+          <Button type="submit" className="w-full" disabled={pending}>
+            {pending ? "Signing up…" : "Sign up"}
           </Button>
         </form>
       </CardContent>
