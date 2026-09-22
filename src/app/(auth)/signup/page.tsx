@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createUser } from "@/lib/actions";
+import { createUser } from "@/features/auth/actions";
 
 export default function SignupPage() {
   const [state, formAction, pending] = useActionState(createUser, {
