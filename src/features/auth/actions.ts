@@ -1,7 +1,9 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { post } from "@/lib/api/client";
+import { AUTHENTICATION_COOKIE } from "@/lib/constants";
 import { parseCredentials, toErrorState } from "./credentials";
 import type { User, UserState } from "./types";
 
@@ -41,4 +43,10 @@ export async function loginUser(
   }
 
   redirect("/");
+}
+
+export async function logout() {
+  (await cookies()).delete(AUTHENTICATION_COOKIE);
+
+  redirect("/login");
 }

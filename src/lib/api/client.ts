@@ -1,29 +1,15 @@
-import { GENERIC_ERROR } from "@/lib/constants";
-import { env } from "@/lib/env";
-import type { ApiResult, FieldErrors } from "./types";
-import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
+import { cookies } from "next/headers";
+import { AUTHENTICATION_COOKIE, GENERIC_ERROR } from "@/lib/constants";
+import { env } from "@/lib/env";
+import type { ApiError, ApiResult, FieldErrors } from "./types";
 
 type ApiErrorBody = {
   message?: string | string[];
   errors?: FieldErrors;
 };
 
-const setAuthHeader = async (response: Response) => {
-  const setCookieHeader = response.headers.get("set-cookie");
-
-  if (setCookieHeader) {
-    const token = setCookieHeader.split(";")[0].split("=")[1];
-
-    (await cookies()).set({
-      name: "Authentication",
-      value: token,
-      secure: true,
-      httpOnly: true,
-      expires: new Date(jwtDecode(token).exp! * 1000),
-    });
-  }
-};
+type FetchResult<T> = { ok: true; data: T; response: Response } | ApiError;
 
 const getHeaders = async () => {
   const cookieStore = await cookies();
@@ -33,20 +19,20 @@ const getHeaders = async () => {
   };
 };
 
-async function request<T>(
+async function apiFetch<T>(
   path: string,
   init: RequestInit,
-): Promise<ApiResult<T>> {
-  let res: Response;
+): Promise<FetchResult<T>> {
+  let response: Response;
 
   try {
-    res = await fetch(`${env.API_URL}/${path}`, init);
+    response = await fetch(`${env.API_URL}/${path}`, init);
   } catch {
     return { ok: false, message: GENERIC_ERROR, fieldErrors: {} };
   }
 
-  if (!res.ok) {
-    const body: ApiErrorBody = await res.json().catch(() => ({}));
+  if (!response.ok) {
+    const body: ApiErrorBody = await response.json().catch(() => ({}));
     const message = Array.isArray(body.message)
       ? body.message.join(", ")
       : body.message;
@@ -58,16 +44,48 @@ async function request<T>(
     };
   }
 
-  await setAuthHeader(res);
+  const data = response.status === 204 ? undefined : await response.json();
 
-  const data = res.status === 204 ? undefined : await res.json();
-
-  return { ok: true, data: data as T };
+  return { ok: true, data: data as T, response };
 }
 
-export async function post<T>(path: string, body: unknown) {
+const toApiResult = <T>(result: FetchResult<T>): ApiResult<T> =>
+  result.ok ? { ok: true, data: result.data } : result;
+
+const persistAuthCookie = async (response: Response) => {
+  const setCookieHeader = response.headers.get("set-cookie");
+
+  if (!setCookieHeader) {
+    return;
+  }
+
+  const token = setCookieHeader.split(";")[0].split("=")[1];
+  const { exp } = jwtDecode(token);
+
+  (await cookies()).set({
+    name: AUTHENTICATION_COOKIE,
+    value: token,
+    secure: true,
+    httpOnly: true,
+    ...(exp && { expires: new Date(exp * 1000) }),
+  });
+};
+
+export async function get<T>(path: string): Promise<ApiResult<T>> {
   const headers = await getHeaders();
-  return request<T>(path, {
+
+  const result = await apiFetch<T>(path, { method: "GET", headers });
+
+  return toApiResult(result);
+}
+
+export async function post<T>(
+  path: string,
+  body: unknown,
+): Promise<ApiResult<T>> {
+  const headers = await getHeaders();
+
+  const result = await apiFetch<T>(path, {
     method: "POST",
     body: JSON.stringify(body),
     headers: {
@@ -75,12 +93,10 @@ export async function post<T>(path: string, body: unknown) {
       ...headers,
     },
   });
-}
 
-export async function get<T>(path: string) {
-  const headers = await getHeaders();
-  return request<T>(path, {
-    method: "GET",
-    headers,
-  });
+  if (result.ok) {
+    await persistAuthCookie(result.response);
+  }
+
+  return toApiResult(result);
 }

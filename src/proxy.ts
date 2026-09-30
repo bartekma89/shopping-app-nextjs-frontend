@@ -1,17 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-const publicRoutes = ["/login", "/signup"];
+import { guestOnlyPaths } from "@/lib/constants";
+import { hasAuthCookie } from "./features/auth/session";
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const auth = request.cookies.get("Authentication")?.value;
-  const isPublicRoute = publicRoutes.includes(pathname);
+  const isPublicRoute = guestOnlyPaths.includes(pathname);
+  const isAuth = await hasAuthCookie();
 
-  if (!auth && !isPublicRoute) {
+  if (!isAuth && !isPublicRoute) {
     return NextResponse.redirect(new URL("/login", request.nextUrl));
   }
 
-  if (auth && isPublicRoute) {
+  if (isAuth && isPublicRoute) {
     return NextResponse.redirect(new URL("/", request.nextUrl));
   }
 }

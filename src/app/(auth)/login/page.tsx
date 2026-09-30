@@ -82,7 +82,8 @@ export default function LoginPage() {
         Don&apos;t have an account?
         <Link
           href="/signup"
-          className="text-foreground underline-offset-4 hover:underline">
+          className="text-foreground underline-offset-4 hover:underline"
+        >
           Sign up
         </Link>
       </CardFooter>
