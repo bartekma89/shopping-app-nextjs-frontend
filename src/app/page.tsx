@@ -1,11 +1,11 @@
-import { getMe } from "./get-me";
+import { CreateProduct } from "@/components/product/create-product";
 
 export default async function Home() {
-  const me = await getMe();
-  console.log(me);
   return (
     <div>
-      <main></main>
+      <main>
+        <CreateProduct />
+      </main>
     </div>
   );
 }
