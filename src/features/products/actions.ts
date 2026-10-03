@@ -1,5 +1,6 @@
 "use server";
 
+import { updateTag } from "next/cache";
 import { post } from "@/lib/api/client";
 import { parseProduct } from "./helpers";
 import type { Product, ProductState } from "./types";
@@ -23,6 +24,8 @@ export async function createProduct(
       values: product.values,
     };
   }
+
+  updateTag("products");
 
   return {
     errors: {},

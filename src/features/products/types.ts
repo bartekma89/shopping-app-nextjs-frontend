@@ -1,23 +1,24 @@
 import type { ProductSchema } from "./schema";
 
 export type Product = {
+  id: number;
   name: string;
   description: string;
-  price: number;
-  userId: string;
+  priceCents: number;
+  userId: number;
 };
 
 export type ProductState = {
   errors: {
     name?: string[];
     description?: string[];
-    price?: string[];
+    priceCents?: string[];
   };
   message?: string | null;
   values?: {
     name: string;
     description: string;
-    price: string;
+    priceCents: string;
   };
   success?: boolean;
 };

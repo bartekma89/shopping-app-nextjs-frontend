@@ -71,10 +71,17 @@ const persistAuthCookie = async (response: Response) => {
   });
 };
 
-export async function get<T>(path: string): Promise<ApiResult<T>> {
+export async function get<T>(
+  path: string,
+  tags?: string[],
+): Promise<ApiResult<T>> {
   const headers = await getHeaders();
 
-  const result = await apiFetch<T>(path, { method: "GET", headers });
+  const result = await apiFetch<T>(path, {
+    method: "GET",
+    headers,
+    next: { tags },
+  });
 
   return toApiResult(result);
 }

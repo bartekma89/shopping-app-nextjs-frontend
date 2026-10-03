@@ -5,12 +5,12 @@ import type { ParsedProduct } from "./types";
 export const parseProduct = (formData: FormData): ParsedProduct => {
   const name = String(formData.get("name") ?? "");
   const description = String(formData.get("description") ?? "");
-  const price = String(formData.get("price") ?? "");
+  const priceCents = String(formData.get("priceCents") ?? "");
 
   const values = {
     name,
     description,
-    price,
+    priceCents,
   };
   const validatedFields = productSchema.safeParse(values);
 

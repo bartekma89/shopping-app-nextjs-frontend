@@ -30,11 +30,15 @@ export const CreateProductForm = ({ onClose }: CreateProductFormProps) => {
   const [state, formAction, pending] = useActionState(actionForm, {
     errors: {},
     message: null,
-    values: { name: "", description: "", price: "" },
+    values: { name: "", description: "", priceCents: "" },
   });
 
   return (
-    <form className="space-y-4" action={formAction}>
+    <form
+      key={JSON.stringify(state.values)}
+      className="space-y-4"
+      action={formAction}
+    >
       <div className="space-y-2">
         <Label htmlFor="name">Product Name</Label>
         <Input
@@ -70,17 +74,17 @@ export const CreateProductForm = ({ onClose }: CreateProductFormProps) => {
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="price">Price</Label>
+        <Label htmlFor="priceCents">Price</Label>
         <Input
-          id="price"
-          name="price"
+          id="priceCents"
+          name="priceCents"
           placeholder="Product price"
-          defaultValue={state.values?.price}
-          aria-describedby="price-error"
+          defaultValue={state.values?.priceCents}
+          aria-describedby="priceCents-error"
           inputMode="decimal"
         />
-        <div id="price-error" aria-live="polite" aria-atomic="true">
-          {state.errors.price?.map((error) => (
+        <div id="priceCents-error" aria-live="polite" aria-atomic="true">
+          {state.errors.priceCents?.map((error) => (
             <p key={error} className="text-sm text-destructive">
               {error}
             </p>

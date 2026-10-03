@@ -7,7 +7,7 @@ export const productSchema = z.object({
   description: z.string().trim().min(1, {
     error: "Description required",
   }),
-  price: z
+  priceCents: z
     .string()
     .trim()
     .min(1, {
@@ -21,7 +21,8 @@ export const productSchema = z.object({
         })
         .positive({
           error: "Price must be a positive number",
-        }),
+        })
+        .transform((price) => Math.round(price * 100)),
     ),
 });
 

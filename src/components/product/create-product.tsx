@@ -17,7 +17,7 @@ export const CreateProduct = () => {
   return (
     <>
       <Button
-        className="absolute left-10 bottom-10"
+        className="fixed left-10 bottom-10"
         onClick={() => setModalVisible(true)}
       >
         <PlusCircleIcon />
