@@ -6,6 +6,7 @@ import type { ProductState } from "@/features/products/types";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { toast } from "../ui/toast";
 
 interface CreateProductFormProps {
   onClose: () => void;
@@ -17,12 +18,16 @@ export const CreateProductForm = ({ onClose }: CreateProductFormProps) => {
 
     if (result.success) {
       onClose();
+      toast.add({
+        type: "success",
+        title: "Product created",
+      });
     }
 
     return result;
   };
 
-  const [state, formAction] = useActionState(actionForm, {
+  const [state, formAction, pending] = useActionState(actionForm, {
     errors: {},
     message: null,
     values: { name: "", description: "", price: "" },
@@ -89,12 +94,14 @@ export const CreateProductForm = ({ onClose }: CreateProductFormProps) => {
         )}
       </div>
 
-      <div>
+      <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={onClose}>
           Cancel
         </Button>
 
-        <Button type="submit">Save changes</Button>
+        <Button type="submit" disabled={pending}>
+          {pending ? "Saving..." : "Save changes"}
+        </Button>
       </div>
     </form>
   );
