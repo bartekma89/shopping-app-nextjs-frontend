@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { userSchema } from "./schemas";
+import type { userSchema } from "./schema";
 
 export type User = {
   id: number;

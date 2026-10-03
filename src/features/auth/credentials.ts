@@ -1,6 +1,6 @@
 import { flattenError } from "zod";
 import type { ApiError } from "@/lib/api/types";
-import { userSchema } from "./schemas";
+import { userSchema } from "./schema";
 import type { ParsedCredentials, UserState } from "./types";
 
 export function parseCredentials(formData: FormData): ParsedCredentials {
