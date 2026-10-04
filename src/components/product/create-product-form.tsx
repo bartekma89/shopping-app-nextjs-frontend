@@ -5,8 +5,15 @@ import { createProduct } from "@/features/products/actions";
 import type { ProductState } from "@/features/products/types";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { toast } from "../ui/toast";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "../ui/field";
+import { mapErrorsToFields } from "@/lib/helpers";
 
 interface CreateProductFormProps {
   onClose: () => void;
@@ -37,66 +44,61 @@ export const CreateProductForm = ({ onClose }: CreateProductFormProps) => {
     <form
       key={JSON.stringify(state.values)}
       className="space-y-4"
-      action={formAction}
-    >
-      <div className="space-y-2">
-        <Label htmlFor="name">Product Name</Label>
-        <Input
-          id="name"
-          name="name"
-          placeholder="Product name"
-          defaultValue={state.values?.name}
-          aria-describedby="name-error"
-        />
-        <div id="name-error" aria-live="polite" aria-atomic="true">
-          {state.errors.name?.map((error) => (
-            <p key={error} className="text-sm text-destructive">
-              {error}
-            </p>
-          ))}
-        </div>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
-        <Input
-          id="description"
-          name="description"
-          placeholder="Product description"
-          defaultValue={state.values?.description}
-          aria-describedby="description-error"
-        />
-        <div id="description-error" aria-live="polite" aria-atomic="true">
-          {state.errors.description?.map((error) => (
-            <p key={error} className="text-sm text-destructive">
-              {error}
-            </p>
-          ))}
-        </div>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="priceCents">Price</Label>
-        <Input
-          id="priceCents"
-          name="priceCents"
-          placeholder="Product price"
-          defaultValue={state.values?.priceCents}
-          aria-describedby="priceCents-error"
-          inputMode="decimal"
-        />
-        <div id="priceCents-error" aria-live="polite" aria-atomic="true">
-          {state.errors.priceCents?.map((error) => (
-            <p key={error} className="text-sm text-destructive">
-              {error}
-            </p>
-          ))}
-        </div>
-      </div>
-
-      <div id="form-error" aria-live="polite" aria-atomic="true">
-        {state.message && (
-          <p className="text-sm text-destructive">{state.message}</p>
-        )}
-      </div>
+      action={formAction}>
+      <FieldGroup>
+        <Field data-invalid={!!state.errors.name?.length}>
+          <FieldLabel htmlFor="name">Product Name</FieldLabel>
+          <Input
+            id="name"
+            name="name"
+            placeholder="Product name"
+            defaultValue={state.values?.name}
+            aria-describedby="name-error"
+            aria-invalid={!!state.errors.name?.length}
+          />
+          <FieldError
+            id="name-error"
+            errors={mapErrorsToFields(state.errors.name)}
+          />
+        </Field>
+        <Field data-invalid={!!state.errors.description?.length}>
+          <FieldLabel htmlFor="description">Description</FieldLabel>
+          <Input
+            id="description"
+            name="description"
+            placeholder="Product description"
+            defaultValue={state.values?.description}
+            aria-describedby="description-error"
+            aria-invalid={!!state.errors.description?.length}
+          />
+          <FieldError
+            id="description-error"
+            errors={mapErrorsToFields(state.errors.description)}
+          />
+        </Field>
+        <Field data-invalid={!!state.errors.priceCents?.length}>
+          <FieldLabel htmlFor="priceCents">Price</FieldLabel>
+          <Input
+            id="priceCents"
+            name="priceCents"
+            placeholder="Product price"
+            defaultValue={state.values?.priceCents}
+            aria-describedby="priceCents-error"
+            aria-invalid={!!state.errors.priceCents?.length}
+            inputMode="decimal"
+          />
+          <FieldError
+            id="priceCents-error"
+            errors={mapErrorsToFields(state.errors.priceCents)}
+          />
+        </Field>
+        {/* <Field>
+          <FieldLabel>Image</FieldLabel>
+          <Input type="file" name="image" accept="image/*" />
+          <FieldDescription>Select a picture to upload</FieldDescription>
+          </Field> */}
+        <FieldError id="form-error">{state.message}</FieldError>
+      </FieldGroup>
 
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={onClose}>
