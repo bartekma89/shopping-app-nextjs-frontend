@@ -1,14 +1,14 @@
 import Image from "next/image";
-import type { Product as ProductType } from "@/features/products/types";
-import { env } from "@/lib/env";
-import { formatMoney } from "@/lib/helpers";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card";
+} from "@/components/ui/card";
+import type { Product as ProductType } from "@/features/products/types";
+import { env } from "@/lib/env";
+import { formatMoney } from "@/lib/helpers";
 
 interface ProductProps {
   product: ProductType;

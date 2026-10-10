@@ -2,8 +2,8 @@
 
 import { PlusCircleIcon } from "lucide-react";
 import { useState } from "react";
-import { Modal } from "../modal";
-import { Button } from "../ui/button";
+import { Modal } from "@/components/modal";
+import { Button } from "@/components/ui/button";
 
 import { CreateProductForm } from "./create-product-form";
 

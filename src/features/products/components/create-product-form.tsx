@@ -1,19 +1,19 @@
 "use client";
 
 import { useActionState } from "react";
-import { createProduct } from "@/features/products/actions";
-import type { ProductState } from "@/features/products/types";
-import { mapErrorsToFields } from "@/lib/helpers";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "../ui/field";
-import { Input } from "../ui/input";
-import { toast } from "../ui/toast";
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/toast";
+import { createProduct } from "@/features/products/actions";
+import type { ProductState } from "@/features/products/types";
+import { mapErrorsToFields } from "@/lib/helpers";
 
 interface CreateProductFormProps {
   onClose: () => void;

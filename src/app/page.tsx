@@ -1,5 +1,5 @@
-import { CreateProduct } from "@/components/product/create-product";
-import { Products } from "@/components/product/products";
+import { CreateProduct } from "@/features/products/components/create-product";
+import { Products } from "@/features/products/components/products";
 
 export default async function Home() {
   return (
