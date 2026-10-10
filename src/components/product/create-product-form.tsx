@@ -3,9 +3,8 @@
 import { useActionState } from "react";
 import { createProduct } from "@/features/products/actions";
 import type { ProductState } from "@/features/products/types";
+import { mapErrorsToFields } from "@/lib/helpers";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { toast } from "../ui/toast";
 import {
   Field,
   FieldDescription,
@@ -13,7 +12,8 @@ import {
   FieldGroup,
   FieldLabel,
 } from "../ui/field";
-import { mapErrorsToFields } from "@/lib/helpers";
+import { Input } from "../ui/input";
+import { toast } from "../ui/toast";
 
 interface CreateProductFormProps {
   onClose: () => void;
@@ -25,10 +25,18 @@ export const CreateProductForm = ({ onClose }: CreateProductFormProps) => {
 
     if (result.success) {
       onClose();
-      toast.add({
-        type: "success",
-        title: "Product created",
-      });
+      toast.add(
+        result.message
+          ? {
+              type: "warning",
+              title: "Product created without image",
+              description: result.message,
+            }
+          : {
+              type: "success",
+              title: "Product created",
+            },
+      );
     }
 
     return result;
@@ -44,7 +52,8 @@ export const CreateProductForm = ({ onClose }: CreateProductFormProps) => {
     <form
       key={JSON.stringify(state.values)}
       className="space-y-4"
-      action={formAction}>
+      action={formAction}
+    >
       <FieldGroup>
         <Field data-invalid={!!state.errors.name?.length}>
           <FieldLabel htmlFor="name">Product Name</FieldLabel>
@@ -92,11 +101,15 @@ export const CreateProductForm = ({ onClose }: CreateProductFormProps) => {
             errors={mapErrorsToFields(state.errors.priceCents)}
           />
         </Field>
-        {/* <Field>
+        <Field>
           <FieldLabel>Image</FieldLabel>
           <Input type="file" name="image" accept="image/*" />
           <FieldDescription>Select a picture to upload</FieldDescription>
-          </Field> */}
+          <FieldError
+            id="image-error"
+            errors={mapErrorsToFields(state.errors.image)}
+          />
+        </Field>
         <FieldError id="form-error">{state.message}</FieldError>
       </FieldGroup>
 

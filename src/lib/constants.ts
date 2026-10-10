@@ -14,3 +14,5 @@ export const navRoutes: NavRoute[] = [
 ];
 
 export const guestOnlyPaths = ["/login", "/signup"];
+
+export const MAX_IMAGE_SIZE = 10 * 1024 * 1024;

@@ -6,13 +6,14 @@ export const parseProduct = (formData: FormData): ParsedProduct => {
   const name = String(formData.get("name") ?? "");
   const description = String(formData.get("description") ?? "");
   const priceCents = String(formData.get("priceCents") ?? "");
+  const image = formData.get("image");
 
   const values = {
     name,
     description,
     priceCents,
   };
-  const validatedFields = productSchema.safeParse(values);
+  const validatedFields = productSchema.safeParse({ image, ...values });
 
   if (!validatedFields.success) {
     return {

@@ -1,3 +1,4 @@
+import type { FieldErrors } from "@/lib/api/types";
 import type { ProductSchema } from "./schema";
 
 export type Product = {
@@ -6,6 +7,7 @@ export type Product = {
   description: string;
   priceCents: number;
   userId: number;
+  imageKey: string | null;
 };
 
 export type ProductState = {
@@ -13,6 +15,7 @@ export type ProductState = {
     name?: string[];
     description?: string[];
     priceCents?: string[];
+    image?: string[];
   };
   message?: string | null;
   values?: {
@@ -21,6 +24,12 @@ export type ProductState = {
     priceCents: string;
   };
   success?: boolean;
+};
+
+export type ImageState = {
+  errors: FieldErrors;
+  message: string | null;
+  success: boolean;
 };
 
 export type ParsedProduct =

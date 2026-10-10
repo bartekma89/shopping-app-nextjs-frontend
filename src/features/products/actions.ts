@@ -3,7 +3,7 @@
 import { updateTag } from "next/cache";
 import { post } from "@/lib/api/client";
 import { parseProduct } from "./helpers";
-import type { Product, ProductState } from "./types";
+import type { ImageState, Product, ProductState } from "./types";
 
 export async function createProduct(
   _prevState: ProductState,
@@ -15,7 +15,9 @@ export async function createProduct(
     return product.state;
   }
 
-  const result = await post<Product>("products", product.data);
+  const { image, ...rest } = product.data;
+
+  const result = await post<Product>("products", rest);
 
   if (!result.ok) {
     return {
@@ -25,7 +27,36 @@ export async function createProduct(
     };
   }
 
+  let imageResult: ImageState | undefined;
+  if (image) {
+    imageResult = await uploadProductImage(result.data.id, image);
+  }
+
   updateTag("products");
+
+  return {
+    errors: {},
+    message: imageResult && !imageResult.success ? imageResult.message : null,
+    success: true,
+  };
+}
+
+async function uploadProductImage(
+  productId: number,
+  file: File,
+): Promise<ImageState> {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const result = await post<void>(`products/${productId}/image`, formData);
+
+  if (!result.ok) {
+    return {
+      errors: result.fieldErrors,
+      message: result.message,
+      success: false,
+    };
+  }
 
   return {
     errors: {},
