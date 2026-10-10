@@ -7,3 +7,12 @@ export type ApiError = {
 };
 
 export type ApiResult<T> = { ok: true; data: T } | ApiError;
+
+export type ApiErrorBody = {
+  message?: string | string[];
+  errors?: FieldErrors;
+};
+
+export type FetchResult<T> =
+  | { ok: true; data: T; response: Response }
+  | ApiError;

@@ -2,14 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { AUTHENTICATION_COOKIE, GENERIC_ERROR } from "@/lib/constants";
 import { env } from "@/lib/env";
-import type { ApiError, ApiResult, FieldErrors } from "./types";
-
-type ApiErrorBody = {
-  message?: string | string[];
-  errors?: FieldErrors;
-};
-
-type FetchResult<T> = { ok: true; data: T; response: Response } | ApiError;
+import type { ApiErrorBody, ApiResult, FetchResult } from "./types";
 
 const getHeaders = async () => {
   const cookieStore = await cookies();
@@ -91,14 +84,17 @@ export async function post<T>(
   body: unknown,
 ): Promise<ApiResult<T>> {
   const headers = await getHeaders();
+  const isFormData = body instanceof FormData;
 
   const result = await apiFetch<T>(path, {
     method: "POST",
-    body: JSON.stringify(body),
-    headers: {
-      "content-type": "application/json",
-      ...headers,
-    },
+    body: isFormData ? body : JSON.stringify(body),
+    headers: isFormData
+      ? headers
+      : {
+          "content-type": "application/json",
+          ...headers,
+        },
   });
 
   if (result.ok) {
