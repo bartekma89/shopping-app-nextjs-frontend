@@ -25,3 +25,8 @@ export type ParsedCredentials =
       values: UserState["values"];
     }
   | { success: false; state: UserState };
+
+export type AuthFormAction = (
+  prevState: UserState,
+  formData: FormData,
+) => Promise<UserState>;

@@ -5,12 +5,9 @@ import { redirect } from "next/navigation";
 import { post } from "@/lib/api/client";
 import { AUTHENTICATION_COOKIE } from "@/lib/constants";
 import { parseCredentials, toErrorState } from "./credentials";
-import type { User, UserState } from "./types";
+import type { AuthFormAction, User } from "./types";
 
-export async function createUser(
-  _prevState: UserState,
-  formData: FormData,
-): Promise<UserState> {
+export const createUser: AuthFormAction = async (_prevState, formData) => {
   const credentials = parseCredentials(formData);
 
   if (!credentials.success) {
@@ -24,12 +21,9 @@ export async function createUser(
   }
 
   redirect("/");
-}
+};
 
-export async function loginUser(
-  _prevState: UserState,
-  formData: FormData,
-): Promise<UserState> {
+export const loginUser: AuthFormAction = async (_prevState, formData) => {
   const credentials = parseCredentials(formData);
 
   if (!credentials.success) {
@@ -43,7 +37,7 @@ export async function loginUser(
   }
 
   redirect("/");
-}
+};
 
 export async function logout() {
   (await cookies()).delete(AUTHENTICATION_COOKIE);
