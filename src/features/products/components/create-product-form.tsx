@@ -111,17 +111,16 @@ export const CreateProductForm = ({ onClose }: CreateProductFormProps) => {
           />
         </Field>
         <FieldError id="form-error">{state.message}</FieldError>
+        <Field>
+          <Button type="submit" disabled={pending}>
+            {pending ? "Saving..." : "Save changes"}
+          </Button>
+
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+        </Field>
       </FieldGroup>
-
-      <div className="flex justify-end gap-2">
-        <Button variant="outline" onClick={onClose}>
-          Cancel
-        </Button>
-
-        <Button type="submit" disabled={pending}>
-          {pending ? "Saving..." : "Save changes"}
-        </Button>
-      </div>
     </form>
   );
 };
