@@ -34,6 +34,7 @@ async function apiFetch<T>(
       ok: false,
       message: message ?? GENERIC_ERROR,
       fieldErrors: body.errors ?? {},
+      status: response.status,
     };
   }
 

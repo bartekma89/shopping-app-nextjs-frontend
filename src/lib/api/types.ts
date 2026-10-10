@@ -4,6 +4,7 @@ export type ApiError = {
   ok: false;
   message: string;
   fieldErrors: FieldErrors;
+  status?: number;
 };
 
 export type ApiResult<T> = { ok: true; data: T } | ApiError;
