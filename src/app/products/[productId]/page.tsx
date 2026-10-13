@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Checkout } from "@/features/checkout/components/checkout";
 import { getProduct } from "@/features/products/queries";
 import { env } from "@/lib/env";
 import { formatMoney } from "@/lib/helpers";
@@ -55,6 +56,9 @@ export default async function ProductPage({
           <p className="whitespace-pre-line text-muted-foreground">
             {product.description}
           </p>
+          <div>
+            <Checkout productId={product.id} productName={product.name} />
+          </div>
         </div>
       </div>
     </main>

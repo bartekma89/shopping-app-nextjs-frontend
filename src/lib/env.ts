@@ -5,7 +5,6 @@ export const env = createEnv({
   server: {
     API_URL: z.url(),
   },
-  client: {},
   runtimeEnv: {
     API_URL: process.env.API_URL,
   },
