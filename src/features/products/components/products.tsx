@@ -1,16 +1,47 @@
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 import { getProducts } from "@/features/products/queries";
+import {
+  type ProductStatus,
+  productStatusSchema,
+} from "@/features/products/schema";
 import { Product } from "./product";
 
-export const Products = async () => {
-  const result = await getProducts();
+interface ProductsProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+const EMPTY_MESSAGES = {
+  available: "No available products.",
+  sold: "No sold products yet.",
+} satisfies Record<NonNullable<ProductStatus>, string>;
+
+export const Products = async ({ searchParams }: ProductsProps) => {
+  const params = await searchParams;
+  const status = productStatusSchema.parse(params.status);
+
+  const result = await getProducts(status);
 
   if (!result.ok) {
     return <p className="text-destructive">{result.message}</p>;
   }
 
   if (result.data.length === 0) {
-    return <p className="text-muted-foreground">No products yet.</p>;
+    return (
+      <div className="flex items-center gap-2">
+        <p className="text-muted-foreground">
+          {status ? EMPTY_MESSAGES[status] : "No products yet."}
+        </p>
+        <Link
+          href="/"
+          className={buttonVariants({
+            variant: "secondary",
+          })}
+        >
+          Show all products
+        </Link>
+      </div>
+    );
   }
 
   return (

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -27,6 +28,7 @@ export const Product = ({ product }: ProductProps) => (
       />
     )}
     <CardHeader>
+      {product.sold && <Badge variant="destructive">Sold</Badge>}
       <CardTitle>{product.name}</CardTitle>
       <CardDescription>{product.description}</CardDescription>
     </CardHeader>

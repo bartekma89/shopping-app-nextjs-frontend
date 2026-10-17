@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 import { Checkout } from "@/features/checkout/components/checkout";
 import { getProduct } from "@/features/products/queries";
 import { env } from "@/lib/env";
@@ -49,6 +50,7 @@ export default async function ProductPage({
         )}
 
         <div className="flex flex-col gap-4">
+          {product.sold && <Badge variant="destructive">Sold</Badge>}
           <h1 className="text-3xl font-bold">{product.name}</h1>
           <p className="text-2xl font-semibold">
             {formatMoney(product.priceCents)}
@@ -57,7 +59,11 @@ export default async function ProductPage({
             {product.description}
           </p>
           <div>
-            <Checkout productId={product.id} productName={product.name} />
+            <Checkout
+              productId={product.id}
+              productName={product.name}
+              disabled={product.sold}
+            />
           </div>
         </div>
       </div>

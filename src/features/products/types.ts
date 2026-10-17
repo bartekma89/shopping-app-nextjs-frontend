@@ -8,6 +8,7 @@ export type Product = {
   priceCents: number;
   userId: number;
   imageKey: string | null;
+  sold: boolean;
 };
 
 export type ProductState = {
