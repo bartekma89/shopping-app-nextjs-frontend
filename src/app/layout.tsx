@@ -5,6 +5,7 @@ import { Provider } from "@/components/providers";
 
 import "./globals.css";
 import { getCurrentUser } from "@/features/auth/session";
+import { ProductEventsListener } from "@/features/products/components/product-events-listener";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -33,6 +34,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <head />
       <body className="min-h-full flex flex-col">
         <Provider>
+          {user && <ProductEventsListener />}
           <Navbar user={user} />
           {children}
         </Provider>

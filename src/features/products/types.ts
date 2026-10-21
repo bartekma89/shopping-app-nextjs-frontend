@@ -43,3 +43,19 @@ export type ParsedProduct =
       success: false;
       state: ProductState;
     };
+
+export type ProductSoldEvent = {
+  productId: number;
+  sellerId: number;
+};
+
+export type ProductCreatedEvent = {
+  product: Product;
+};
+
+export type ProductPurchasedEvent = {
+  recipientId: number;
+  productId: number;
+  name: string;
+  priceCents: number;
+};

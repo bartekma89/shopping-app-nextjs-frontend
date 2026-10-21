@@ -4,7 +4,7 @@ import { AUTHENTICATION_COOKIE, GENERIC_ERROR } from "@/lib/constants";
 import { env } from "@/lib/env";
 import type { ApiErrorBody, ApiResult, FetchResult } from "./types";
 
-const getHeaders = async () => {
+export const getHeaders = async () => {
   const cookieStore = await cookies();
 
   return {
