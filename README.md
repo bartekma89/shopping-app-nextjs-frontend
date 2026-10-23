@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shopping Web
 
-## Getting Started
+The frontend for a small online shop, built with **Next.js** (App Router). Signed-in users can browse products, add their own, buy one through **Stripe Checkout**, and see live product updates. All data comes from the companion NestJS + Prisma API in [`../shopping-server`](../shopping-server).
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Authentication**: sign up and log in with email and password. The JWT from the API is kept in an HTTP-only cookie, and `src/proxy.ts` redirects guests to `/login` and signed-in users away from the auth pages.
+- **Product catalogue**: a product list with loading skeletons, a product detail page (`/products/[productId]`), and a status filter (all / available / sold) kept in the URL query string.
+- **Create products**: a modal form validated with Zod, with an optional image upload sent as `FormData`.
+- **Prices in PLN**: stored in cents and formatted for display.
+- **Checkout**: a single-product Stripe Checkout session with success and cancel pages.
+- **Live updates**: the `/api/products/events` route proxies the API's Server-Sent Events stream, so signed-in users see product changes (for example, a product being sold) without reloading.
+- **UI**: shadcn/ui components, light/dark theme toggle, toast notifications, and a navbar with a user menu and logout.
+
+## Tech stack
+
+| Area | Technology |
+| --- | --- |
+| Framework | [Next.js 16](https://nextjs.org) (App Router, Server Components, Server Actions, React Compiler) |
+| UI library | [React 19](https://react.dev) |
+| Language | [TypeScript](https://www.typescriptlang.org) |
+| Styling | [Tailwind CSS 4](https://tailwindcss.com), `tw-animate-css` |
+| Components | [shadcn/ui](https://ui.shadcn.com) on [Base UI](https://base-ui.com), [Lucide](https://lucide.dev) icons |
+| Theming | [next-themes](https://github.com/pacocoursey/next-themes) |
+| Validation | [Zod 4](https://zod.dev), [`@t3-oss/env-nextjs`](https://env.t3.gg) for typed env variables |
+| Auth helpers | [`jwt-decode`](https://github.com/auth0/jwt-decode) |
+| Lint & format | [Biome](https://biomejs.dev) |
+| Package manager | [pnpm](https://pnpm.io) |
+
+**Backend** ([`shopping-server`](../shopping-server)): NestJS 11, Prisma 7 with PostgreSQL, JWT auth with argon2 password hashing, Stripe, BullMQ, and Pino logging.
+
+## Project structure
+
+```
+src/
+├── app/                 # Routes (App Router)
+│   ├── (auth)/          # /login, /signup
+│   ├── api/products/    # SSE proxy for live product events
+│   ├── checkout/        # Stripe success / cancel pages
+│   └── products/        # Product detail page
+├── components/          # Shared components (navbar, modal, theme) and shadcn/ui primitives in ui/
+├── features/            # Feature modules: actions, queries, schemas, components
+│   ├── auth/
+│   ├── checkout/
+│   └── products/
+├── lib/                 # API client, env, constants, helpers
+└── proxy.ts             # Route protection (formerly middleware)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Getting started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Prerequisites
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Node.js 22+
+- pnpm
+- The [`shopping-server`](../shopping-server) API running (by default on `http://localhost:3001`)
 
-## Learn More
+### Setup
 
-To learn more about Next.js, take a look at the following resources:
+1. Install dependencies:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   pnpm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Create `.env.local` with the API address:
 
-## Deploy on Vercel
+   ```bash
+   API_URL=http://localhost:3001
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Start the dev server:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   pnpm dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000).
+
+## Scripts
+
+| Command | Description |
+| --- | --- |
+| `pnpm dev` | Start the development server |
+| `pnpm build` | Build for production |
+| `pnpm start` | Run the production build |
+| `pnpm lint` | Check the code with Biome |
+| `pnpm lint:write` | Check and auto-fix with Biome |
+| `pnpm format` | Format the code with Biome |
